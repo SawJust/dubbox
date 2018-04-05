@@ -123,14 +123,12 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
     private Invoker<T> doselect(LoadBalance loadbalance, Invocation invocation, List<Invoker<T>> invokers, List<Invoker<T>> selected) throws RpcException {
         if (invokers == null || invokers.size() == 0)
             return null;
-        if (invokers.size() == 1)
-            return invokers.get(0);
-        // 如果只有两个invoker，退化成轮循
-        if (invokers.size() == 2 && selected != null && selected.size() > 0) {
-            return selected.get(0) == invokers.get(0) ? invokers.get(1) : invokers.get(0);
-        }
+
         Invoker<T> invoker = loadbalance.select(invokers, getUrl(), invocation);
-        
+        if (invoker == null) {
+            return null;
+        }
+
         //如果 selected中包含（优先判断） 或者 不可用&&availablecheck=true 则重试.
         if( (selected != null && selected.contains(invoker))
                 ||(!invoker.isAvailable() && getUrl()!=null && availablecheck)){

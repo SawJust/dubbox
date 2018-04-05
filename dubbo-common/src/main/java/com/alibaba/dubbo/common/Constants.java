@@ -593,6 +593,8 @@ public class Constants {
 
     public static final String GENERIC_SERIALIZATION_BEAN          = "bean";
 
+    public static final String LOGICAL_ROUTER                       = "logical.router";
+
     /*
      * private Constants(){ }
      */

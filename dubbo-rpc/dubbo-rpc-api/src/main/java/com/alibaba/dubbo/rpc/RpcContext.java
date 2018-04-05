@@ -15,6 +15,7 @@
  */
 package com.alibaba.dubbo.rpc;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +31,12 @@ import java.util.concurrent.TimeoutException;
 
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.URL;
+import com.alibaba.dubbo.common.json.JSON;
+import com.alibaba.dubbo.common.json.ParseException;
+import com.alibaba.dubbo.common.logger.Logger;
+import com.alibaba.dubbo.common.logger.LoggerFactory;
 import com.alibaba.dubbo.common.utils.NetUtils;
+import com.logical.router.LogicalConstants;
 
 /**
  * Thread local context. (API, ThreadLocal, ThreadSafe)
@@ -44,6 +50,8 @@ import com.alibaba.dubbo.common.utils.NetUtils;
  * @export
  */
 public class RpcContext {
+
+    private static final Logger logger = LoggerFactory.getLogger(RpcContext.class);
 	
 	private static final ThreadLocal<RpcContext> LOCAL = new ThreadLocal<RpcContext>() {
 		@Override
@@ -661,7 +669,7 @@ public class RpcContext {
     
 	/**
 	 * oneway调用，只发送请求，不接收返回结果.
-	 * @param callable
+	 * @param runable
 	 */
 	public void asyncCall(Runnable runable) {
     	try {
@@ -674,4 +682,27 @@ public class RpcContext {
 			removeAttachment(Constants.RETURN_KEY);
 		}
     }
+
+    public void setLogicalRouterContext(Map<String, String> logicalContext) {
+        if (logicalContext != null && logicalContext.size() > 0) {
+            try {
+                attachments.put(Constants.LOGICAL_ROUTER, JSON.json(logicalContext));
+            } catch (IOException e) {
+                logger.error("LogicalRouterMap convert to String failed");
+            }
+        }
+    }
+
+    public Map<String, String> getLogicalRouterContext() {
+        String logicalRouterStr = attachments.get(Constants.LOGICAL_ROUTER);
+        if (logicalRouterStr != null && logicalRouterStr.length() > 0) {
+            try {
+                return JSON.parse(logicalRouterStr, (new HashMap<String, String>()).getClass());
+            } catch (ParseException e) {
+                logger.error("Get logicalRouterMap from attachments failed, key=logical.router, value: "+logicalRouterStr);
+            }
+        }
+        return null;
+    }
+
 }

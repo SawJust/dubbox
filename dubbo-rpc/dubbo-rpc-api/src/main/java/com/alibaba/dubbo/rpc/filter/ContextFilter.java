@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.extension.Activate;
+import com.alibaba.dubbo.common.json.JSON;
 import com.alibaba.dubbo.rpc.Filter;
 import com.alibaba.dubbo.rpc.Invocation;
 import com.alibaba.dubbo.rpc.Invoker;
@@ -27,6 +28,7 @@ import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcInvocation;
+import com.logical.router.context.LogicalRouterContext;
 
 /**
  * ContextInvokerFilter
@@ -62,6 +64,8 @@ public class ContextFilter implements Filter {
                 RpcContext.getContext().setAttachments(attachments);
             }
         }
+
+        LogicalRouterContext.setLogicanRouterContext(RpcContext.getContext().getLogicalRouterContext());
 
         if (invocation instanceof RpcInvocation) {
             ((RpcInvocation)invocation).setInvoker(invoker);

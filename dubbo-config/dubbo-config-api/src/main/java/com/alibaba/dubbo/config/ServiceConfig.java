@@ -48,6 +48,8 @@ import com.alibaba.dubbo.rpc.cluster.ConfiguratorFactory;
 import com.alibaba.dubbo.rpc.ServiceClassHolder;
 import com.alibaba.dubbo.rpc.service.GenericService;
 import com.alibaba.dubbo.rpc.support.ProtocolUtils;
+import com.logical.router.LogicalConstants;
+import com.logical.router.context.LogicalRouterContext;
 
 /**
  * ServiceConfig
@@ -447,6 +449,11 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             protocolConfig.setRegister(false);
             map.put("notify", "false");
         }
+        // 逻辑路由单元
+        if(StringUtils.isNotEmpty(LogicalRouterContext.getLocalLogicalRouterName())){
+            map.put(LogicalConstants.LOGICAL_ROUTER_NAME, LogicalRouterContext.getLocalLogicalRouterName());
+        }
+
         // 导出服务
         String contextPath = protocolConfig.getContextpath();
         if ((contextPath == null || contextPath.length() == 0) && provider != null) {

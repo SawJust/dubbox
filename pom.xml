@@ -460,6 +460,11 @@
 			<groupId>com.googlecode.jmockit</groupId>
 			<artifactId>jmockit</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.logical.router</groupId>
+			<artifactId>logical-router</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

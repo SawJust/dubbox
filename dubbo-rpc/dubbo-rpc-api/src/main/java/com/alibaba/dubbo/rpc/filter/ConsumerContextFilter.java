@@ -26,6 +26,8 @@ import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.RpcInvocation;
 
+import java.util.Map;
+
 /**
  * ConsumerContextInvokerFilter
  * 
@@ -47,7 +49,9 @@ public class ConsumerContextFilter implements Filter {
         try {
             return invoker.invoke(invocation);
         } finally {
+            Map logicalRouterContext = RpcContext.getContext().getLogicalRouterContext();
             RpcContext.getContext().clearAttachments();
+            RpcContext.getContext().setLogicalRouterContext(logicalRouterContext);
         }
     }
 
